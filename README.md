@@ -88,8 +88,8 @@ Open http://127.0.0.1:7860. Requires a prior `python main.py` so `artifacts/` ex
 Requires **Python 3.10–3.11** (TensorFlow 2.15 does not support 3.12+).
 
 ```bash
-git clone https://github.com/shivamnk27/emotion-classification-nlp.git
-cd emotion-classification-nlp
+git clone https://github.com/mansabhairodagi/Multi-Label-Emotion-Classifier.git
+cd Multi-Label-Emotion-Classifier
 python -m venv .venv
 
 # Windows
