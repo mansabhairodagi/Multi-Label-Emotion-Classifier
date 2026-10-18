@@ -6,6 +6,18 @@ __pycache__/
 *.h5
 *_predicted.csv
 artifacts/
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials.json
+*.secret
 .DS_Store
 Thumbs.db
 desktop.ini
