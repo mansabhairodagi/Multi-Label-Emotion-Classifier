@@ -10,7 +10,7 @@ The project trains an ensemble of classical and deep models, saves the artifacts
 | **Task** | Multi-label text classification |
 | **DistilBERT** | Macro-F1 **0.667** |
 | **Ensemble** | Macro-F1 **0.662** (validation-weighted soft vote) |
-| **Demo** | `python app.py` → http://127.0.0.1:7860 |
+| **Demo** | `python -m src.app` → http://127.0.0.1:7860 |
 | **Stack** | scikit-learn, TensorFlow/Keras, Hugging Face Transformers, Gradio |
 
 For pipeline details, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
@@ -28,11 +28,11 @@ flowchart LR
   E --> F
   F --> G[Per-emotion thresholds]
   G --> H[artifacts/]
-  H --> I[predict.py]
+  H --> I[src/predict.py]
   H --> J[Gradio app]
 ```
 
-**Train once** (`main.py`) → save models → **infer** via CLI or the web demo. No new models are trained at prediction time.
+**Train once** (`src/main.py`) → save models → **infer** via CLI or the web demo. No new models are trained at prediction time.
 
 ---
 
@@ -54,7 +54,7 @@ Emotion labels in this dataset are not mutually exclusive: a single sentence can
 
 ## Results
 
-Hold-out test performance on `track-a.csv` (cluster-aware split):
+Hold-out test performance on `data/track-a.csv` (cluster-aware split):
 
 | Model | Macro-F1 |
 |-------|----------|
@@ -73,13 +73,13 @@ Soft voting averages probabilities across models. DistilBERT (0.667) is far ahea
 
 ## Demo
 
-![Gradio demo classifying “I finally got the internship!” as joy](./demo-preview.png)
+![Gradio demo classifying “I finally got the internship!” as joy](./docs/images/demo-preview.png)
 
 ```bash
-python app.py
+python -m src.app
 ```
 
-Open http://127.0.0.1:7860. Requires a prior `python main.py` so `artifacts/` exists. The first Classify loads models (slow on CPU); later requests are faster.
+Open http://127.0.0.1:7860. Requires a prior `python -m src.main` so `artifacts/` exists. The first Classify loads models (slow on CPU); later requests are faster.
 
 ---
 
@@ -108,8 +108,8 @@ pip install -r requirements.txt
 ### 1. Train and save artifacts
 
 ```bash
-python main.py
-# optional: python main.py --data track-a.csv --out artifacts
+python -m src.main
+# optional: python -m src.main --data data/track-a.csv --out artifacts
 ```
 
 Writes models, tokenizers, thresholds, and ensemble weights to `artifacts/`.  
@@ -118,8 +118,8 @@ DistilBERT fine-tuning on CPU typically takes **45–60+ minutes**.
 ### 2. Predict (no retraining)
 
 ```bash
-python predict.py --text "I am so happy I could cry"
-python predict.py track-a-test.csv
+python -m src.predict --text "I am so happy I could cry"
+python -m src.predict data/track-a-test.csv
 ```
 
 CSV output includes `predicted_labels` and per-emotion probabilities (`prob_joy`, …).
@@ -130,27 +130,31 @@ See [Demo](#demo) above.
 
 ### 4. Power BI (optional)
 
-Load a prediction CSV into `Text_Emotion_Analytics.pbix` for interactive filtering by emotion.
+Load a prediction CSV into `dashboards/Text_Emotion_Analytics.pbix` for interactive filtering by emotion.
 
-![Power BI dashboard preview](./dashboard-preview.png)
+![Power BI dashboard preview](./docs/images/dashboard-preview.png)
 
 ---
 
 ## Repository layout
 
 ```text
-├── main.py                     # Training + evaluation + artifact export
-├── predict.py                  # Inference CLI
-├── app.py                      # Gradio UI
-├── emotion_model.py            # DistilBERT model + save/load helpers
-├── track-a.csv                 # Training data
-├── track-a-test.csv            # Sample texts for inference
+├── src/
+│   ├── main.py                 # Training + evaluation + artifact export
+│   ├── predict.py              # Inference CLI
+│   ├── app.py                  # Gradio UI
+│   └── emotion_model.py        # DistilBERT model + save/load helpers
+├── data/
+│   ├── track-a.csv             # Training data
+│   └── track-a-test.csv        # Sample texts for inference
+├── docs/
+│   ├── ARCHITECTURE.md         # Pipeline and design notes
+│   └── images/                 # Demo and dashboard screenshots
+├── experiments/
+│   └── DistillBERT.py          # Alternate PyTorch trainer (optional)
+├── dashboards/
+│   └── Text_Emotion_Analytics.pbix
 ├── requirements.txt
-├── docs/ARCHITECTURE.md        # Pipeline and design notes
-├── experiments/DistillBERT.py  # Alternate PyTorch trainer (optional)
-├── Text_Emotion_Analytics.pbix
-├── demo-preview.png            # Gradio UI screenshot
-├── dashboard-preview.png
 └── artifacts/                  # Produced by training (gitignored)
 ```
 
@@ -189,7 +193,7 @@ MIT — see [LICENSE](LICENSE).
 
 | Issue | What to do |
 |-------|------------|
-| Missing `artifacts/` | Run `python main.py` before `predict.py` or `app.py` |
+| Missing `artifacts/` | Run `python -m src.main` before `src.predict` or `src.app` |
 | Slow training or first Gradio load | Expected on CPU; DistilBERT weights are large |
 | Weak *anger* scores | Rarest class; class weights and thresholds help but F1 stays lowest |
 | Gradio / template errors | Install the pinned versions in `requirements.txt` |

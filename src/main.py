@@ -1,17 +1,22 @@
 """
 Train the multi-label emotion ensemble and save artifacts to ./artifacts/
 
-Usage:
-  python main.py
-  python main.py --data track-a.csv --out artifacts
+Usage (from the project root):
+  python -m src.main
+  python -m src.main --data data/track-a.csv --out artifacts
 """
 
 import os
 import sys
+from pathlib import Path
 
 # Must be set before importing TensorFlow / Keras
 os.environ["TF_DETERMINISTIC_OPS"] = "1"
 os.environ["TF_USE_LEGACY_KERAS"] = "1"
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 import random
 import argparse
@@ -32,8 +37,9 @@ from sklearn.metrics import classification_report, f1_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import AutoTokenizer
 
-from emotion_model import (
+from src.emotion_model import (
     ARTIFACT_DIR,
+    DEFAULT_TRAIN_CSV,
     build_bert,
     save_artifacts,
 )
@@ -95,7 +101,10 @@ def report_f1(name, y_true, probs_or_pred, thr=None):
     return score
 
 
-def train(data_path: str = "track-a.csv", artifact_dir: str = str(ARTIFACT_DIR)):
+def train(
+    data_path: str = str(DEFAULT_TRAIN_CSV),
+    artifact_dir: str = str(ARTIFACT_DIR),
+):
     df = pd.read_csv(data_path).dropna(subset=["text"])
     emotion_labels = EMOTION_LABELS
 
@@ -340,7 +349,7 @@ def train(data_path: str = "track-a.csv", artifact_dir: str = str(ARTIFACT_DIR))
         metrics=metrics,
     )
     print(f"\nSaved trained models to {out.resolve()}")
-    print("Predict without retraining:  python predict.py <csv_or_text>")
+    print("Predict without retraining:  python -m src.predict <csv_or_text>")
     return out
 
 
@@ -350,8 +359,8 @@ if __name__ == "__main__":
     )
     ap.add_argument(
         "--data",
-        default="track-a.csv",
-        help="Training CSV path (default: track-a.csv)",
+        default=str(DEFAULT_TRAIN_CSV),
+        help="Training CSV path (default: data/track-a.csv)",
     )
     ap.add_argument(
         "--out",

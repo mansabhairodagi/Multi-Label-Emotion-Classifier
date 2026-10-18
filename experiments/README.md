@@ -6,4 +6,6 @@ Scripts here are **optional** and not used by the main train → predict → Gra
 |------|--------|
 | `DistillBERT.py` | Standalone PyTorch DistilBERT multi-label trainer (requires `torch`) |
 
-Use `main.py` + `predict.py` + `app.py` for the portfolio demo.
+`DistillBERT.py` reads `data/track-a.csv` from the repository root and writes its checkpoint next to this script.
+
+Use `python -m src.main`, `python -m src.predict`, and `python -m src.app` for the portfolio demo.

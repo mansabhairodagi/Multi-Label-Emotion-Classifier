@@ -1,10 +1,10 @@
 """
 Predict emotions from a saved ensemble (no retraining).
 
-Usage:
-  python predict.py track-a-test.csv
-  python predict.py --text "I am so happy I could cry"
-  python predict.py track-a-test.csv --out my_preds.csv --artifacts artifacts
+Usage (from the project root):
+  python -m src.predict data/track-a-test.csv
+  python -m src.predict --text "I am so happy I could cry"
+  python -m src.predict data/track-a-test.csv --out my_preds.csv --artifacts artifacts
 """
 
 from __future__ import annotations
@@ -12,9 +12,14 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+from pathlib import Path
 
 os.environ["TF_USE_LEGACY_KERAS"] = "1"
 os.environ.setdefault("TF_DETERMINISTIC_OPS", "1")
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 import pandas as pd
 import tensorflow as tf
@@ -22,7 +27,7 @@ from tensorflow import keras as tfk
 
 sys.modules["keras"] = tfk
 
-from emotion_model import ARTIFACT_DIR, EmotionEnsemble
+from src.emotion_model import ARTIFACT_DIR, EmotionEnsemble
 
 
 def main():

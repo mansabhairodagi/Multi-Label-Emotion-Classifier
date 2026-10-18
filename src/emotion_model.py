@@ -18,7 +18,10 @@ from tensorflow.keras import layers
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from transformers import AutoTokenizer, TFAutoModel
 
-ARTIFACT_DIR = Path("artifacts")
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DATA_DIR = PROJECT_ROOT / "data"
+ARTIFACT_DIR = PROJECT_ROOT / "artifacts"
+DEFAULT_TRAIN_CSV = DATA_DIR / "track-a.csv"
 HF_MAX_LEN = 128
 
 
@@ -116,7 +119,7 @@ class EmotionEnsemble:
         if not meta_path.exists():
             raise FileNotFoundError(
                 f"No trained artifacts at {self.artifact_dir.resolve()}. "
-                f"Run: python main.py"
+                f"Run: python -m src.main"
             )
 
         with open(meta_path, encoding="utf-8") as f:

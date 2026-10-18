@@ -2,7 +2,7 @@
 Gradio demo for the multi-label emotion ensemble.
 
 Usage (from project root, after training):
-  python app.py
+  python -m src.app
 Then open http://127.0.0.1:7860
 """
 
@@ -10,17 +10,22 @@ from __future__ import annotations
 
 import os
 import sys
+from pathlib import Path
 
 # TF / Keras must be configured before Gradio pulls in its web stack
 os.environ["TF_USE_LEGACY_KERAS"] = "1"
 os.environ.setdefault("TF_DETERMINISTIC_OPS", "1")
 os.environ["GRADIO_ANALYTICS_ENABLED"] = "False"
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from tensorflow import keras as tfk
 
 sys.modules["keras"] = tfk
 
-from emotion_model import ARTIFACT_DIR, EmotionEnsemble
+from src.emotion_model import ARTIFACT_DIR, EmotionEnsemble
 
 EXAMPLES = [
     ["I am so happy I could cry with joy!"],
@@ -40,7 +45,7 @@ def get_ensemble() -> EmotionEnsemble:
         meta = os.path.join(str(ARTIFACT_DIR), "meta.json")
         if not os.path.exists(meta):
             raise FileNotFoundError(
-                f"No trained models in '{ARTIFACT_DIR}'. Run: python main.py"
+                f"No trained models in '{ARTIFACT_DIR}'. Run: python -m src.main"
             )
         print(f"Loading ensemble from {ARTIFACT_DIR} ...", flush=True)
         _ENSEMBLE = EmotionEnsemble(ARTIFACT_DIR)
@@ -108,7 +113,7 @@ def build_ui():
         btn.click(fn=predict_emotions, inputs=inp, outputs=[out_md, out_label])
         inp.submit(fn=predict_emotions, inputs=inp, outputs=[out_md, out_label])
         gr.Markdown(
-            "_Loads local `artifacts/`. Train first with `python main.py` if needed._"
+            "_Loads local `artifacts/`. Train first with `python -m src.main` if needed._"
         )
     return demo
 

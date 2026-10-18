@@ -5,7 +5,7 @@ How the training and inference paths fit together, and why the main design choic
 ## End-to-end flow
 
 ```text
-track-a.csv
+data/track-a.csv
     │
     ▼
 cluster_based_split (K-Means on multi-hot labels)
@@ -27,17 +27,20 @@ cluster_based_split (K-Means on multi-hot labels)
                 │
         ┌───────┴────────┐
         ▼                ▼
-   predict.py         app.py (Gradio)
+   src/predict.py     src/app.py (Gradio)
 ```
 
 ## Module roles
 
 | File | Responsibility |
 |------|----------------|
-| `main.py` | Train all models, tune the ensemble, evaluate, write `artifacts/` |
-| `emotion_model.py` | `DistilBertMultiLabel`, `save_artifacts()`, `EmotionEnsemble` loader |
-| `predict.py` | CLI inference only (no training) |
-| `app.py` | Gradio UI; loads `EmotionEnsemble` on first classify |
+| `src/main.py` | Train all models, tune the ensemble, evaluate, write `artifacts/` |
+| `src/emotion_model.py` | `DistilBertMultiLabel`, `save_artifacts()`, `EmotionEnsemble` loader |
+| `src/predict.py` | CLI inference only (no training) |
+| `src/app.py` | Gradio UI; loads `EmotionEnsemble` on first classify |
+| `data/` | Training CSV and sample inference CSV |
+| `dashboards/` | Optional Power BI report |
+| `docs/images/` | Screenshots used by the README |
 | `experiments/DistillBERT.py` | Standalone PyTorch trainer; not used by the main path |
 
 ## Design notes
@@ -58,7 +61,7 @@ Under class imbalance, a single 0.5 cutoff is a poor fit. Each emotion’s thres
 Wrapping `TFAutoModel` in the Functional API left classification Dense layers poorly tracked. A subclassed `tf.keras.Model` trains the head correctly.
 
 ### Saved artifacts
-`artifacts/meta.json` stores emotion names, soft-vote weights, thresholds, and reported metrics so `predict.py` and `app.py` do not retrain.
+`artifacts/meta.json` stores emotion names, soft-vote weights, thresholds, and reported metrics so `src/predict.py` and `src/app.py` do not retrain.
 
 ## Scope
 

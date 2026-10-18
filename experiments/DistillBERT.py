@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pandas as pd
 import numpy as np
 import re
@@ -16,8 +18,10 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Load the dataset
-df = pd.read_csv('track-a.csv')
+# Load the dataset (resolved from the repo root, not the current working directory)
+ROOT = Path(__file__).resolve().parents[1]
+CHECKPOINT = Path(__file__).resolve().parent / "best_model_state_distilbert.bin"
+df = pd.read_csv(ROOT / "data" / "track-a.csv")
 
 # Data Exploration
 print("Initial data shape:", df.shape)
@@ -161,11 +165,11 @@ if __name__ == '__main__':
         history['val_acc'].append(val_acc)
         history['val_loss'].append(val_loss)
         if val_acc > best_accuracy:
-            torch.save(model.state_dict(), 'best_model_state_distilbert.bin')
+            torch.save(model.state_dict(), CHECKPOINT)
             best_accuracy = val_acc
 
     # Test Evaluation
-    model.load_state_dict(torch.load('best_model_state_distilbert.bin'))
+    model.load_state_dict(torch.load(CHECKPOINT))
     test_acc, test_loss = eval_model(model, test_data_loader, loss_fn, device, len(test_df))
     print(f'\nTest Accuracy: {test_acc:.4f}')
     print(f'Test Loss: {test_loss:.4f}')
