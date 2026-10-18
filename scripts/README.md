@@ -1,4 +1,4 @@
-# Experiments
+# Scripts
 
 Scripts here are **optional** and not used by the main train → predict → Gradio path.
 

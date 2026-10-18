@@ -39,9 +39,9 @@ cluster_based_split (K-Means on multi-hot labels)
 | `src/predict.py` | CLI inference only (no training) |
 | `src/app.py` | Gradio UI; loads `EmotionEnsemble` on first classify |
 | `data/` | Training CSV and sample inference CSV |
-| `dashboards/` | Optional Power BI report |
-| `docs/images/` | Screenshots used by the README |
-| `experiments/DistillBERT.py` | Standalone PyTorch trainer; not used by the main path |
+| `assets/` | Screenshots and the optional Power BI report |
+| `scripts/DistillBERT.py` | Standalone PyTorch trainer; not used by the main path |
+| `tests/` | Checks that the repository layout stays in place |
 
 ## Design notes
 
@@ -67,4 +67,4 @@ Wrapping `TFAutoModel` in the Functional API left classification Dense layers po
 
 - DistilBERT is the strongest single model; the Bi-LSTM is weaker and down-weighted in the ensemble.
 - Power BI is optional batch analytics; the Gradio app is the interactive interface.
-- `experiments/DistillBERT.py` is an alternate implementation, not the default pipeline.
+- `scripts/DistillBERT.py` is an alternate implementation, not the default pipeline.

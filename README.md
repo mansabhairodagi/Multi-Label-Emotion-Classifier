@@ -73,7 +73,7 @@ Soft voting averages probabilities across models. DistilBERT (0.667) is far ahea
 
 ## Demo
 
-![Gradio demo classifying “I finally got the internship!” as joy](./docs/images/demo-preview.png)
+![Gradio demo classifying “I finally got the internship!” as joy](./assets/demo-preview.png)
 
 ```bash
 python -m src.app
@@ -130,31 +130,32 @@ See [Demo](#demo) above.
 
 ### 4. Power BI (optional)
 
-Load a prediction CSV into `dashboards/Text_Emotion_Analytics.pbix` for interactive filtering by emotion.
+Load a prediction CSV into `assets/Text_Emotion_Analytics.pbix` for interactive filtering by emotion.
 
-![Power BI dashboard preview](./docs/images/dashboard-preview.png)
+![Power BI dashboard preview](./assets/dashboard-preview.png)
 
 ---
 
 ## Repository layout
 
 ```text
-├── src/
-│   ├── main.py                 # Training + evaluation + artifact export
-│   ├── predict.py              # Inference CLI
-│   ├── app.py                  # Gradio UI
-│   └── emotion_model.py        # DistilBERT model + save/load helpers
-├── data/
-│   ├── track-a.csv             # Training data
-│   └── track-a-test.csv        # Sample texts for inference
+├── src/                        # Training, inference, and Gradio app
+│   ├── main.py
+│   ├── predict.py
+│   ├── app.py
+│   └── emotion_model.py
+├── scripts/
+│   └── DistillBERT.py          # Optional PyTorch trainer
+├── tests/                      # Repository layout checks
 ├── docs/
-│   ├── ARCHITECTURE.md         # Pipeline and design notes
-│   └── images/                 # Demo and dashboard screenshots
-├── experiments/
-│   └── DistillBERT.py          # Alternate PyTorch trainer (optional)
-├── dashboards/
-│   └── Text_Emotion_Analytics.pbix
+│   └── ARCHITECTURE.md
+├── data/
+│   ├── track-a.csv
+│   └── track-a-test.csv
+├── assets/                     # Screenshots and Power BI report
 ├── requirements.txt
+├── README.md
+├── LICENSE
 └── artifacts/                  # Produced by training (gitignored)
 ```
 
